@@ -94,6 +94,7 @@ demoheader.tmp
 stats.txt
 config.cfg
 SAVE
+*.7z
 SAVE/*
 *.vpc.sentinel
 *.scc
