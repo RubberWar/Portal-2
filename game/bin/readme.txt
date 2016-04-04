@@ -1,1 +1,0 @@
-Copy everything from "steamapps\common\Alien Swarm\bin" over here.

@@ -244,7 +244,10 @@ public:
 	CNetworkVar( int, m_nAttachment );
 	CNetworkVar( float, m_flSpriteFramerate );
 	CNetworkVar( float, m_flFrame );
-
+#ifdef PORTAL
+	CNetworkVar(bool, m_bDrawInMainRender);
+	CNetworkVar(bool, m_bDrawInPortalRender);
+#endif
 
 	float		m_flDieTime;
 

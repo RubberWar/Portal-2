@@ -6188,10 +6188,16 @@ void C_BaseEntity::SimulateEntities()
 		int iNext;
 		for ( int iCur = g_EntityLists[ENTITY_LIST_SIMULATE].Head(); iCur != g_EntityLists[ENTITY_LIST_SIMULATE].InvalidIndex(); iCur = iNext )
 		{
-			iNext = g_EntityLists[ENTITY_LIST_SIMULATE].Next( iCur );
+			iNext = g_EntityLists[ENTITY_LIST_SIMULATE].Next(iCur);
+
 			C_BaseEntity *pCur = g_EntityLists[ENTITY_LIST_SIMULATE].Element(iCur);
-			if ( pCur->IsEFlagSet( EFL_KILLME ) )
+#ifndef _DEBUG
+			if (pCur->IsEFlagSet(EFL_KILLME))
 				continue;
+#else
+			if ((unsigned int)pCur == (unsigned int)0xdddddddd || pCur->IsEFlagSet(EFL_KILLME))
+				continue;
+#endif
 
 #ifdef _DEBUG
 			s_nSuppressChanges = ENTITY_LIST_SIMULATE;
@@ -6200,7 +6206,7 @@ void C_BaseEntity::SimulateEntities()
 #ifdef _DEBUG
 			s_nSuppressChanges = NUM_ENTITY_LISTS;
 #endif
-			if ( bRemove )
+			if (bRemove)
 			{
 				pCur->RemoveFromEntityList(ENTITY_LIST_SIMULATE);
 			}

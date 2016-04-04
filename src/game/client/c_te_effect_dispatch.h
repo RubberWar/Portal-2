@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+ï»¿//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -14,13 +14,13 @@
 #include "effect_dispatch_data.h"
 #include "precache_register.h"
 
-typedef void (*ClientEffectCallback)( const CEffectData &data );
+typedef void(*ClientEffectCallback)(const CEffectData &data);
 
 
 class CClientEffectRegistration
 {
 public:
-	CClientEffectRegistration( const char *pEffectName, ClientEffectCallback fn );
+	CClientEffectRegistration(const char *pEffectName, ClientEffectCallback fn);
 
 public:
 	const char *m_pEffectName;
@@ -50,9 +50,9 @@ public:
 
 #define DECLARE_CLIENT_EFFECT_END()	PRECACHE_REGISTER_END()
 
-void DispatchEffectToCallback( const char *pEffectName, const CEffectData &m_EffectData );
-void DispatchEffect( const char *pName, const CEffectData &data );
-void DispatchEffect( IRecipientFilter& filter, float flDelay, const char *pName, const CEffectData &data );
-void DispatchEffect( IRecipientFilter& filter, float delay, KeyValues *pKeyValues );
+void DispatchEffectToCallback(const char *pEffectName, const CEffectData &m_EffectData);
+void DispatchEffect(const char *pName, const CEffectData &data);
+void DispatchEffect(IRecipientFilter& filter, float flDelay, const char *pName, const CEffectData &data);
+void DispatchEffect(IRecipientFilter& filter, float delay, KeyValues *pKeyValues);
 
 #endif // C_TE_EFFECT_DISPATCH_H

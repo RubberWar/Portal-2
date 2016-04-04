@@ -1449,7 +1449,6 @@ static void PostProcessPSystem()
 	mdlcache->EndLock();
 	mdlcache->EndCoarseLock();
 }
-
 static void ProcessPSystem( CNewParticleEffect *&pNewEffect )
 {
 	// If this is a new effect, then update its bbox so it goes in the
@@ -1480,7 +1479,7 @@ static void ProcessPSystem( CNewParticleEffect *&pNewEffect )
 	}
 	else if ( pNewEffect->ShouldSimulate() )
 	{
-		pNewEffect->Simulate( s_flThreadedPSystemTimeStep );
+		pNewEffect->Simulate(s_flThreadedPSystemTimeStep);
 	}
 
 	if ( pNewEffect->IsFinished() )

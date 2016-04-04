@@ -668,7 +668,8 @@ void CModelRenderSystem::SetupBones( int nModelTypeCount, ModelListByType_t *pMo
 			pModel->m_pPoseToWorld = rdPoseToWorld.Base();
 			for ( int b = 0; b < nBoneCount; b++ )
 			{
-				ConcatTransforms_Aligned( pModel->m_pBoneToWorld[b], pPoseToBone[b], pModel->m_pPoseToWorld[b] );
+				if (pModel->m_pBoneToWorld)
+					ConcatTransforms_Aligned( pModel->m_pBoneToWorld[b], pPoseToBone[b], pModel->m_pPoseToWorld[b] );
 			}
 		}
 	}

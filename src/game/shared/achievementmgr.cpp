@@ -332,7 +332,7 @@ void CAchievementMgr::LevelInitPreEntity()
 {
 	m_bCheatsEverOn = false;
 
-
+#ifndef PORTAL2_DLL
 #	ifdef GAME_DLL
 		// For single-player games, achievement mgr must live on the server.  (Only the server has detailed knowledge of game state.)
 		Assert( !GameRules()->IsMultiplayer() );
@@ -340,6 +340,7 @@ void CAchievementMgr::LevelInitPreEntity()
 		// For multiplayer games, achievement mgr must live on the client.  (Only the client can read/write player state from Steam/XBox Live.)
 		Assert( GameRules()->IsMultiplayer() );
 #	endif
+#endif
 
 
 	for ( int i = 0; i < MAX_SPLITSCREEN_PLAYERS; ++i )

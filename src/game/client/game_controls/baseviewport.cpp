@@ -392,7 +392,8 @@ void CBaseViewport::ShowPanel( const char *pName, bool state )
 	// Also try to show the panel in the full screen viewport
 	if ( this != s_pFullscreenViewportInterface )
 	{
-		GetFullscreenViewPortInterface()->ShowPanel( pName, state );
+		if (s_pFullscreenViewportInterface)
+			GetFullscreenViewPortInterface()->ShowPanel( pName, state );
 	}
 
 	ASSERT_LOCAL_PLAYER_RESOLVABLE();

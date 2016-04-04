@@ -2365,8 +2365,7 @@ bool CSceneEntity::CheckActors()
 					if ( IsRunningScriptedSceneWithSpeech( pActor ) )
 					{
 						bShouldWait = true;
-					}
-					
+					}	
 #ifdef HL2_EPISODIC
 					// HACK: Alyx cannot play scenes when she's in the middle of transitioning					
 					if ( pActor->IsInAVehicle() )

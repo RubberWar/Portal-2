@@ -16,7 +16,9 @@
 #include "rendertexture.h"
 #include "model_types.h"
 
-
+#ifdef PORTAL
+#include "PortalRender.h"
+#endif
 
 // NOTE: This has to be the last file included!
 #include "tier0/memdbgon.h"
@@ -850,7 +852,19 @@ void CClientTools::PostToolMessage( KeyValues *pKeyValues )
 		return;
 	}
 
+#ifdef PORTAL
+	if (!Q_stricmp(pKeyValues->GetName(), "portals"))
+	{
+		g_pPortalRender->HandlePortalPlaybackMessage(pKeyValues);
+		return;
+	}
 
+	if (!Q_stricmp(pKeyValues->GetName(), "query CPortalRenderer"))
+	{
+		pKeyValues->SetInt("IsRenderingPortal", g_pPortalRender->IsRenderingPortal() ? 1 : 0);
+		return;
+	}
+#endif
 }
 
 

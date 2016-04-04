@@ -3730,6 +3730,19 @@ void CBaseEntity::OnSave( IEntitySaveUtils *pUtils )
 //-----------------------------------------------------------------------------
 void CBaseEntity::OnRestore()
 {
+#if defined( PORTAL ) || defined( HL2_EPISODIC ) || defined ( HL2_DLL ) || defined( HL2_LOSTCOAST )
+	// We had a short period during the 2013 beta where the FL_* flags had a bogus value near the top, so detect
+	// these bad saves and just give up. Only saves from the short beta period should have been effected.
+	if (GetFlags() & FL_FAKECLIENT)
+	{
+		char szMsg[256];
+		V_snprintf(szMsg, sizeof(szMsg), "\nInvalid save, unable to load. Please run \"map %s\" to restart this level manually\n\n", gpGlobals->mapname.ToCStr());
+		Msg("%s", szMsg);
+
+		engine->ServerCommand("wait;wait;disconnect;showconsole\n");
+	}
+#endif
+
 	SimThink_EntityChanged( this );
 
 	// touchlinks get recomputed
@@ -7113,7 +7126,7 @@ bool CBaseEntity::CallScriptFunction( const char *pFunctionName, ScriptVariant_t
 		return false;
 	}
 
-
+	g_pScriptVM->SetValue("owninginstance", this->GetScriptInstance());
 	HSCRIPT hFunc = m_ScriptScope.LookupFunction( pFunctionName );
 
 	if( hFunc )

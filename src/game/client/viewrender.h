@@ -169,7 +169,9 @@ public:
 	VPlane *		GetFrustum();
 	virtual int		GetDrawFlags() { return 0; }
 
-
+#ifdef PORTAL
+	virtual	void	EnableWorldFog() {};
+#endif
 
 protected:
 	// @MULTICORE (toml 8/11/2006): need to have per-view frustum. Change when move view stack to client
@@ -256,7 +258,9 @@ protected:
 	void			Begin360ZPass();
 	void			End360ZPass();
 
-
+#ifdef PORTAL
+	virtual bool	ShouldDrawPortals() { return true; }
+#endif
 
 	void ReleaseLists();
 
@@ -464,9 +468,11 @@ protected:
 
 	virtual void			ViewDrawScene_Intro( const CViewSetup &view, int nClearFlags, const IntroData_t &introData );
 
-
-
-
+#ifdef PORTAL 
+	// Intended for use in the middle of another ViewDrawScene call, this allows stencils to be drawn after opaques but before translucents are drawn in the main view.
+	void			ViewDrawScene_PortalStencil(const CViewSetup &view, ViewCustomVisibility_t *pCustomVisibility);
+	void			Draw3dSkyboxworld_Portal(const CViewSetup &view, int &nClearFlags, bool &bDrew3dSkybox, SkyboxVisibility_t &nSkyboxVisible, ITexture *pRenderTarget = NULL);
+#endif // PORTAL
 
 	// Determines what kind of water we're going to use
 	void			DetermineWaterRenderInfo( const VisibleFogVolumeInfo_t &fogVolumeInfo, WaterRenderInfo_t &info );
@@ -510,6 +516,10 @@ protected:
 	int					m_BaseDrawFlags;	// Set in ViewDrawScene and OR'd into m_DrawFlags as it goes.
 	C_BaseEntity		*m_pCurrentlyDrawingEntity;
 
+#ifdef PORTAL
+	friend class CPortalRender; //portal drawing needs muck with views in weird ways
+	friend class CPortalRenderable;
+#endif
 
 	int				m_BuildRenderableListsNumber;
 

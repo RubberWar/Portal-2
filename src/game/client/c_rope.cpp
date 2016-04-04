@@ -28,6 +28,9 @@
 //Precache the rope shadowdepth material
 PRECACHE_REGISTER_BEGIN( GLOBAL, PrecacheRopes )
 	PRECACHE( MATERIAL, "cable/rope_shadowdepth" )
+#ifdef PORTAL2_DLL
+	PRECACHE( MATERIAL, "cable/cable" )
+#endif
 PRECACHE_REGISTER_END()
 
 void RecvProxy_RecomputeSprings( const CRecvProxyData *pData, void *pStruct, void *pOut )
@@ -310,7 +313,11 @@ void CRopeManager::DrawRenderCache_NonQueued( bool bShadowDepth, RopeRenderData_
 			IMaterial *pMaterial = bShadowDepth ? g_pSplineCableShadowdepth : pRenderCache[iRenderCache].m_pSolidMaterial;
 
 			// Need to make sure that all rope materials use the splinerope shader since there are a lot of assumptions about how the shader interfaces with this code.
+#ifdef PORTAL2_DLL
+			//pMaterial->SetShader("splinerope");
+#else
 			AssertOnce( V_stricmp( pMaterial->GetShaderName(), "splinerope" ) == 0 );
+#endif
 
 			pRenderContext->Bind( pMaterial );
 

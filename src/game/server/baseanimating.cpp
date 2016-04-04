@@ -3038,6 +3038,9 @@ void CBaseAnimating::GetSkeleton( CStudioHdr *pStudioHdr, Vector pos[], Quaterni
 	IBoneSetup boneSetup( pStudioHdr, boneMask, GetPoseParameterArray() );
 	boneSetup.InitPose( pos, q );
 
+	if (!pos || !q)
+		return;
+
 	boneSetup.AccumulatePose( pos, q, GetSequence(), GetCycle(), 1.0, gpGlobals->curtime, m_pIk );
 
 	if ( m_pIk )

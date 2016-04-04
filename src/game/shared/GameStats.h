@@ -120,7 +120,7 @@ public:
 	virtual void Clear( void ) { }
 
 	virtual bool StatTrackingEnabledForMod( void ) { return false; } //Override this to turn on the system. Stat tracking is disabled by default and will always be disabled at the user's request
-	static bool StatTrackingAllowed( void ) { } //query whether stat tracking is possible and warranted by the user
+	static bool StatTrackingAllowed(void) { return true; } //query whether stat tracking is possible and warranted by the user
 	virtual bool HaveValidData( void ) { return true; } // whether we currently have an interesting enough data set to upload.  Called at upload time { } if false, data is not uploaded.
 
 	virtual bool ShouldTrackStandardStats( void ) { return true; } //exactly what was tracked for EP1 release

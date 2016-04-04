@@ -1056,7 +1056,10 @@ bool CBasePlayer::ShouldTakeDamageInCommentaryMode( const CTakeDamageInfo &input
 	if ( inputInfo.GetInflictor() == this && inputInfo.GetAttacker() == this )
 		return true;
 
-
+#ifdef PORTAL
+	if (inputInfo.GetDamageType() & DMG_ACID)
+		return true;
+#endif
 
 	// In commentary, ignore all damage except for falling and leeches
 	if ( !(inputInfo.GetDamageType() & (DMG_BURN | DMG_PLASMA | DMG_FALL | DMG_CRUSH)) && inputInfo.GetDamageType() != DMG_GENERIC )
@@ -2833,7 +2836,7 @@ bool CBasePlayer::IsUseableEntity( CBaseEntity *pEntity, unsigned int requiredCa
 bool CBasePlayer::CanPickupObject( CBaseEntity *pObject, float massLimit, float sizeLimit )
 {
 	// UNDONE: Make this virtual and move to HL2 player
-#if defined( HL2_DLL ) 
+#if defined( HL2_DLL ) ||  defined( PORTAL )
 	//Must be valid
 	if ( pObject == NULL )
 		return false;
@@ -4517,7 +4520,9 @@ void CBasePlayer::PostThink()
 				if ( m_hUseEntity->OnControls( this ) && 
 					( !GetActiveWeapon() || GetActiveWeapon()->IsEffectActive( EF_NODRAW ) ||
 					( GetActiveWeapon()->GetActivity() == ACT_VM_HOLSTER ) 
-		
+#ifdef PORTAL // Portalgun view model stays up when holding an object -Jeep
+						|| FClassnameIs(GetActiveWeapon(), "weapon_portalgun")
+#endif //#ifdef PORTAL	
 					) )
 				{  
 					m_hUseEntity->Use( this, this, USE_SET, 2 );	// try fire the gun
@@ -4621,6 +4626,52 @@ void CBasePlayer::PostThink()
 		}
 	}
 }
+
+CBaseEntity *FindEntityClassForward(CBasePlayer *pMe, char *classname)
+{
+	trace_t tr;
+
+	Vector forward;
+	pMe->EyeVectors(&forward);
+	UTIL_TraceLine(pMe->EyePosition(),
+		pMe->EyePosition() + forward * MAX_COORD_RANGE,
+		MASK_SOLID, pMe, COLLISION_GROUP_NONE, &tr);
+	if (tr.fraction != 1.0 && tr.DidHitNonWorldEntity())
+	{
+		CBaseEntity *pHit = tr.m_pEnt;
+		if (FClassnameIs(pHit, classname))
+		{
+			return pHit;
+		}
+	}
+	return NULL;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Finds the nearest entity in front of the player of the given
+//			classname, preferring collidable entities, but allows selection of 
+//			enities that are on the other side of walls or objects
+//
+// Input  :
+// Output :
+//-----------------------------------------------------------------------------
+CBaseEntity *FindPickerEntityClass(CBasePlayer *pPlayer, char *classname)
+{
+	// First try to trace a hull to an entity
+	CBaseEntity *pEntity = FindEntityClassForward(pPlayer, classname);
+
+	// If that fails just look for the nearest facing entity
+	if (!pEntity)
+	{
+		Vector forward;
+		Vector origin;
+		pPlayer->EyeVectors(&forward);
+		origin = pPlayer->WorldSpaceCenter();
+		pEntity = gEntList.FindEntityClassNearestFacing(origin, forward, 0.95, classname);
+	}
+	return pEntity;
+}
+
 
 // handles touching physics objects
 void CBasePlayer::Touch( CBaseEntity *pOther )

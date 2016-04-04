@@ -2342,6 +2342,9 @@ int CClientLeafSystem::ExtractCulledRenderables( int nCount, RenderableInfo_t **
 			if ( !IsLeafMarker( pInfo ) )
 			{
 				int frustumIndex = rlInfo.m_nArea + 1;
+				if (frustumIndex < 0)
+					continue;
+
 				if ( list[frustumIndex]->CullBox( rlInfo.m_vecMins, rlInfo.m_vecMaxs ) )
 				{
 					// Necessary for dependent models to be grabbed

@@ -75,7 +75,10 @@ inline void *ReallocUnattributed( void *pMem, size_t nSize )
 // this magic only works under win32
 // under linux this malloc() overrides the libc malloc() and so we
 // end up in a recursion (as MemAlloc_Alloc() calls malloc)
-#if _MSC_VER >= 1400
+#if _MSC_VER >= 1900
+#define ALLOC_CALL _CRTRESTRICT 
+#define FREE_CALL 
+#elif _MSC_VER >= 1400
 #define ALLOC_CALL _CRTNOALIAS _CRTRESTRICT 
 #define FREE_CALL _CRTNOALIAS 
 #else
@@ -133,12 +136,27 @@ void *_malloc_base( size_t nSize )
 }
 #endif
 
+#if _MSC_VER < 1900
+
 void *_calloc_base( size_t nSize )
 {
 	void *pMem = AllocUnattributed( nSize );
 	memset(pMem, 0, nSize);
 	return pMem;
 }
+
+#else
+
+#define _calloc_base _calloc_base_NEW
+
+void *_calloc_base_NEW(size_t nSize)
+{
+	void *pMem = AllocUnattributed(nSize);
+	memset(pMem, 0, nSize);
+	return pMem;
+}
+
+#endif
 
 void *_realloc_base( void *pMem, size_t nSize )
 {
@@ -599,7 +617,9 @@ int _CrtSetDbgFlag( int nNewFlag )
 #define AFNAME(var) __p_ ## var
 #define AFRET(var)  &var
 
+#if _MSC_VER < 1900
 int _crtDbgFlag = _CRTDBG_ALLOC_MEM_DF;
+#endif
 int* AFNAME(_crtDbgFlag)(void)
 {
 	return AFRET(_crtDbgFlag);
@@ -747,12 +767,27 @@ int __cdecl _CrtDbgReportW( int nRptType, const wchar_t *szFile, int nLine,
 	return 0;
 }
 
+#if _MSC_VER < 1900
+
 int __cdecl _VCrtDbgReportA( int nRptType, const wchar_t * szFile, int nLine, 
 							 const wchar_t * szModule, const wchar_t * szFormat, va_list arglist )
 {
 	Assert(0);
 	return 0;
 }
+
+#else
+
+#define _VCrtDbgReportA _VCrtDbgReportA_NEW;
+
+int __cdecl _VCrtDbgReportA_NEW(int nRptType, const wchar_t * szFile, int nLine,
+	const wchar_t * szModule, const wchar_t * szFormat, va_list arglist)
+{
+	Assert(0);
+	return 0;
+}
+
+#endif
 
 int __cdecl _CrtSetReportHook2( int mode, _CRT_REPORT_HOOK pfnNewHook )
 {
@@ -1232,10 +1267,12 @@ struct _tiddata {
 
     /* pointer to the copy of the multibyte character information used by
      * the thread */
+#if _MSC_VER < 1900
     pthreadmbcinfo  ptmbcinfo;
 
     /* pointer to the copy of the locale informaton used by the thead */
     pthreadlocinfo  ptlocinfo;
+#endif
     int         _ownlocale;     /* if 1, this thread owns its own locale */
 
     /* following field is needed by NLG routines */
@@ -1283,7 +1320,12 @@ typedef struct _tiddata * _ptiddata;
 
 class _LocaleUpdate
 {
+#if _MSC_VER >= 1900
+	_locale_t localeinfo;
+#else
     _locale_tstruct localeinfo;
+#endif
+
     _ptiddata ptd;
     bool updated;
     public:
@@ -1318,7 +1360,11 @@ class _LocaleUpdate
     }
     _locale_t GetLocaleT()
     {
-        return &localeinfo;
+#if _MSC_VER >= 1900
+        return localeinfo;
+#else
+		return &localeinfo;
+#endif
     }
 };
 

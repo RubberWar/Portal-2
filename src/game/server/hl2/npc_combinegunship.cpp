@@ -2524,7 +2524,7 @@ void CNPC_CombineGunship::SelfDestruct( void )
 #endif
 
 #ifdef HL2_EPISODIC
-	NPCEventResponse()->TriggerEvent( "TLK_CITIZEN_RESPONSE_KILLED_GUNSHIP", false, false );
+	//NPCEventResponse()->TriggerEvent( "TLK_CITIZEN_RESPONSE_KILLED_GUNSHIP", false, false );
 #endif
 }
 
@@ -2873,7 +2873,7 @@ void CNPC_CombineGunship::TraceAttack( const CTakeDamageInfo &info, const Vector
 #endif
 
 #ifdef HL2_EPISODIC
-			NPCEventResponse()->TriggerEvent( "TLK_CITIZEN_RESPONSE_SHOT_GUNSHIP", false, false );
+		//	NPCEventResponse()->TriggerEvent( "TLK_CITIZEN_RESPONSE_SHOT_GUNSHIP", false, false );
 #endif
 		}
 

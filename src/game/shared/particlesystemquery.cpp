@@ -24,7 +24,7 @@
 
 
 
-#ifdef SWARM_DLL
+#ifdef INFESTED_DLL
 #include "asw_shareddefs.h"
 #endif
 
@@ -728,7 +728,7 @@ static CollisionGroupNameRecord_t s_NameMap[]={
 	{ "ACTOR", COLLISION_GROUP_NPC_ACTOR },
 	{ "PASSABLE", COLLISION_GROUP_PASSABLE_DOOR },	
 
-#if defined( SWARM_DLL )
+#if defined( INFESTED_DLL )
 	{ "SENTRYPROJ", ASW_COLLISION_GROUP_SENTRY_PROJECTILE },
 #endif
 };

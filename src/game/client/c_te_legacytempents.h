@@ -19,7 +19,6 @@ struct model_t;
 #include "mempool.h"
 #include "UtlLinkedList.h"
 
-#if defined( SDK_DLL )
 enum
 {
 	CS_SHELL_9MM = 0,
@@ -29,7 +28,6 @@ enum
 	CS_SHELL_762NATO,
 	CS_SHELL_338MAG,
 };
-#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: Interface for lecacy temp entities

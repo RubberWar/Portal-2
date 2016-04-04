@@ -49,9 +49,9 @@ public:
 	bool			CheckCanThrowGrenade( const Vector &vecTarget );
 	virtual	bool	CanGrenadeEnemy( bool bUseFreeKnowledge = true );
 	virtual bool	CanAltFireEnemy( bool bUseFreeKnowledge );
-	virtual bool	CanTeleportFromEnemy( bool bUseFreeKnowledge = true );
-	virtual bool	CanTeleportToLOF( bool bUseFreeKnowledge = true );
-	virtual bool	CanTossTeleportGrenade( Vector const &posTarget );
+	//virtual bool	CanTeleportFromEnemy( bool bUseFreeKnowledge = true );
+	//virtual bool	CanTeleportToLOF( bool bUseFreeKnowledge = true );
+	//virtual bool	CanTossTeleportGrenade( Vector const &posTarget );
 	int				GetGrenadeConditions( float flDot, float flDist );
 	int				RangeAttack2Conditions( float flDot, float flDist ); // For innate grenade attack
 	int				MeleeAttack1Conditions( float flDot, float flDist ); // For kick/punch
@@ -73,7 +73,7 @@ public:
 	void InputLookOff( inputdata_t &inputdata );
 	void InputStartPatrolling( inputdata_t &inputdata );
 	void InputStopPatrolling( inputdata_t &inputdata );
-	void InputAssault( inputdata_t &inputdata );
+//	void InputAssault( inputdata_t &inputdata );
 	void InputHitByBugbait( inputdata_t &inputdata );
 	void InputThrowGrenadeAtTarget( inputdata_t &inputdata );
 	void InputThrowTeleportGrenadeAtTarget( inputdata_t &inputdata );
@@ -156,19 +156,19 @@ public:
 
 	virtual bool	ShouldPickADeathPose( void );
 
-	virtual bool	PassesDamageFilter( const CTakeDamageInfo &info );
+//	virtual bool	PassesDamageFilter( const CTakeDamageInfo &info );
 
-protected:
-	virtual bool	ComputeTeleportToss(
+//protected:
+	/*virtual bool	ComputeTeleportToss(
 		bool bUseFreeKnowledge, bool bPreferCoverPos,
 		float flAngMin, float flAngMax, float flAngPreference,
 		float flDistMin, float flDistMax, float flDistPreference,
-		float flTravelMinDist, float flTravelMaxDist, float flTravelDistPreference );
+		float flTravelMinDist, float flTravelMaxDist, float flTravelDistPreference );*/
 
-	virtual void Advisor_OnStartedLevitating();
-	virtual void Advisor_OnFinishedLevitating();
-	virtual void VPhysicsUpdate( IPhysicsObject *pPhysics );
-	virtual void UpdateOnRemove();
+	//virtual void Advisor_OnStartedLevitating();
+	//virtual void Advisor_OnFinishedLevitating();
+	//virtual void VPhysicsUpdate( IPhysicsObject *pPhysics );
+	//virtual void UpdateOnRemove();
 
 protected:
 	void			SetKickDamage( int nDamage ) { m_nKickDamage = nDamage; }

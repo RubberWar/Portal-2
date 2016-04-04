@@ -112,11 +112,10 @@
 #include "asw_gamerules.h"
 #endif
 
-
-
-
-
-
+#ifdef PORTAL
+#include "prop_portal_shared.h"
+#include "portal_player.h"
+#endif
 
 #ifdef _WIN32
 #include "IGameUIFuncs.h"
@@ -1721,7 +1720,31 @@ static TITLECOMMENT gTitleComments[] =
 	
 	{ "ep2_outland_12a", "#ep2_Chapter7_Title" },
 	{ "ep2_outland_12", "#ep2_Chapter6_Title" },
-
+#ifdef PORTAL
+	{ "testchmb_a_00",			"#Portal_Chapter1_Title" },
+	{ "testchmb_a_01",			"#Portal_Chapter1_Title" },
+	{ "testchmb_a_02",			"#Portal_Chapter2_Title" },
+	{ "testchmb_a_03",			"#Portal_Chapter2_Title" },
+	{ "testchmb_a_04",			"#Portal_Chapter3_Title" },
+	{ "testchmb_a_05",			"#Portal_Chapter3_Title" },
+	{ "testchmb_a_06",			"#Portal_Chapter4_Title" },
+	{ "testchmb_a_07",			"#Portal_Chapter4_Title" },
+	{ "testchmb_a_08_advanced",	"#Portal_Chapter5_Title" },
+	{ "testchmb_a_08",			"#Portal_Chapter5_Title" },
+	{ "testchmb_a_09_advanced",	"#Portal_Chapter6_Title" },
+	{ "testchmb_a_09",			"#Portal_Chapter6_Title" },
+	{ "testchmb_a_10_advanced",	"#Portal_Chapter7_Title" },
+	{ "testchmb_a_10",			"#Portal_Chapter7_Title" },
+	{ "testchmb_a_11_advanced",	"#Portal_Chapter8_Title" },
+	{ "testchmb_a_11",			"#Portal_Chapter8_Title" },
+	{ "testchmb_a_13_advanced",	"#Portal_Chapter9_Title" },
+	{ "testchmb_a_13",			"#Portal_Chapter9_Title" },
+	{ "testchmb_a_14_advanced",	"#Portal_Chapter10_Title" },
+	{ "testchmb_a_14",			"#Portal_Chapter10_Title" },
+	{ "testchmb_a_15",			"#Portal_Chapter11_Title" },
+	{ "escape_",				"#Portal_Chapter11_Title" },
+	{ "background2",			"#Portal_Chapter12_Title" },
+#endif
 };
 
 void CServerGameDLL::GetSaveComment( char *text, int maxlength, float flMinutes, float flSeconds, bool bNoTime )
@@ -2850,7 +2873,51 @@ void CServerGameClients::ClientSettingsChanged( edict_t *pEdict )
 }
 
 
+#ifdef PORTAL
+//-----------------------------------------------------------------------------
+// Purpose: Runs CFuncAreaPortalBase::UpdateVisibility on each portal
+// Input  : pAreaPortal - The Area portal to test for visibility from portals
+// Output : int - 1 if any portal needs this area portal open, 0 otherwise.
+//-----------------------------------------------------------------------------
+int TestAreaPortalVisibilityThroughPortals(CFuncAreaPortalBase* pAreaPortal, edict_t *pViewEntity, unsigned char *pvs, int pvssize)
+{
+	int iPortalCount = CProp_Portal_Shared::AllPortals.Count();
+	if (iPortalCount == 0)
+		return 0;
 
+	CProp_Portal **pPortals = CProp_Portal_Shared::AllPortals.Base();
+
+	for (int i = 0; i != iPortalCount; ++i)
+	{
+		CProp_Portal* pLocalPortal = pPortals[i];
+		if (pLocalPortal && pLocalPortal->m_bActivated)
+		{
+			CProp_Portal* pRemotePortal = pLocalPortal->m_hLinkedPortal.Get();
+
+			// Make sure this portal's linked portal is in the PVS before we add what it can see
+			if (pRemotePortal && pRemotePortal->m_bActivated && pRemotePortal->NetworkProp() &&
+				pRemotePortal->NetworkProp()->IsInPVS(pViewEntity, pvs, pvssize))
+			{
+				bool bIsOpenOnClient = true;
+				float fovDistanceAdjustFactor = 1.0f;
+				Vector portalOrg = pLocalPortal->GetAbsOrigin();
+				// TODO(Preston): Optimise this!
+				CUtlVector<Vector> portalOrgVector;
+				portalOrgVector.AddToTail(portalOrg);
+				int iPortalNeedsThisPortalOpen = pAreaPortal->UpdateVisibility(portalOrgVector, fovDistanceAdjustFactor, bIsOpenOnClient);
+
+				// Stop checking on success, this portal needs to be open
+				if (iPortalNeedsThisPortalOpen)
+				{
+					return iPortalNeedsThisPortalOpen;
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: A client can have a separate "view entity" indicating that his/her view should depend on the origin of that
@@ -2936,7 +3003,13 @@ void CServerGameClients::ClientSetupVisibility( edict_t *pViewEntity, edict_t *p
 		portalNums[iOutPortal] = pCur->m_portalNumber;
 		isOpen[iOutPortal] = pCur->UpdateVisibility( areaPortalOrigins, fovDistanceAdjustFactor, bIsOpenOnClient );
 
-
+#ifdef PORTAL
+		// If the client doesn't need this open, test if portals might need this area portal open
+		if (isOpen[iOutPortal] == 0)
+		{
+			isOpen[iOutPortal] = TestAreaPortalVisibilityThroughPortals(pCur, pViewEntity, pvs, pvssize);
+		}
+#endif
 
 		++iOutPortal;
 		if ( iOutPortal >= ARRAYSIZE( portalNums ) )
@@ -2969,9 +3042,16 @@ void CServerGameClients::ClientSetupVisibility( edict_t *pViewEntity, edict_t *p
 	if ( pPlayer )
 	{
 		pPlayer->m_Local.UpdateAreaBits( pPlayer, portalBits );
+
+#ifdef PORTAL 
+		// *After* the player's view has updated its area bits, add on any other areas seen by portals
+		CPortal_Player* pPortalPlayer = dynamic_cast<CPortal_Player*>(pPlayer);
+		if (pPortalPlayer)
+		{
+			pPortalPlayer->UpdatePortalViewAreaBits(pvs, pvssize);
+		}
+#endif //PORTAL
 	}
-
-
 }
 
 

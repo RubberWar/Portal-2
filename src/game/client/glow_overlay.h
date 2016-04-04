@@ -16,7 +16,9 @@
 #include "sun_shared.h"
 #include "c_pixel_visibility.h"
 
-
+#ifdef PORTAL
+#include "c_prop_portal.h" //MAX_PORTAL_RECURSIVE_VIEWS
+#endif
 
 extern float g_flOverlayRange;
 
@@ -57,6 +59,9 @@ public:
 	bool		m_bInSky;
 	float		m_skyObstructionScale;
 
+#ifdef PORTAL
+	float		m_skyObstructionScaleBackups[MAX_PORTAL_RECURSIVE_VIEWS]; //used in portal mod during stencil rendering to maintain obstructions while rendering recursive views
+#endif
 
 	CGlowSprite	m_Sprites[MAX_SUN_LAYERS];
 	int			m_nSprites;
@@ -76,7 +81,10 @@ public:
 	static void		DrawOverlays( bool bCacheFullSceneState );
 	static void		UpdateSkyOverlays( float zFar, bool bCacheFullSceneState );
 
-
+#ifdef PORTAL
+	static void		BackupSkyOverlayData(int iBackupToSlot);
+	static void		RestoreSkyOverlayData(int iRestoreFromSlot);
+#endif
 
 protected:
 

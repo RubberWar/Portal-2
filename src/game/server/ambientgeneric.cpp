@@ -33,6 +33,7 @@ static soundlevel_t ComputeSoundlevel( float radius, bool playEverywhere )
 {
 	soundlevel_t soundlevel = SNDLVL_NONE;
 
+#ifndef PORTAL2_DLL
 	if ( radius > 0 && !playEverywhere )
 	{
 		// attenuation is set to a distance, compute falloff
@@ -41,6 +42,7 @@ static soundlevel_t ComputeSoundlevel( float radius, bool playEverywhere )
 
 		soundlevel = (soundlevel_t)(int)(40 + dB_loss); // sound at 40dB at reference distance
 	}
+#endif
 
 	return soundlevel;
 }

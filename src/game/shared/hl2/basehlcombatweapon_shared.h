@@ -41,7 +41,6 @@ public:
 	virtual bool	Deploy( void );
 	virtual bool	Holster( CBaseCombatWeapon *pSwitchingTo );
 	virtual void	WeaponIdle( void );
-	virtual bool	SendWeaponAnim( int iActivity );
 
 	virtual void	AddViewmodelBob( CBaseViewModel *viewmodel, Vector &origin, QAngle &angles );
 	virtual	float	CalcViewmodelBob( void );
@@ -53,7 +52,7 @@ public:
 	static const	WeaponProficiencyInfo_t *GetDefaultProficiencyValues();
 
 	virtual void	ItemHolsterFrame( void );
-	virtual bool	IsSpecialSuitAbility( void );	// Weapon can be used as a suit ability
+	virtual bool SendWeaponAnim( int iActivity ) { return BaseClass::SendWeaponAnim( iActivity );};
 
 	int				m_iPrimaryAttacks;		// # of primary attacks performed with this weapon
 	int				m_iSecondaryAttacks;	// # of secondary attacks performed with this weapon

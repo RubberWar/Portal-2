@@ -3029,6 +3029,12 @@ void CTriggerCamera::Enable( void )
 {
 	m_state = USE_ON;
 
+	if (GameRules()->IsMultiplayer())
+	{
+		DispatchUpdateTransmitState();
+		return;
+	}
+
 	if ( !m_hPlayer || !m_hPlayer->IsPlayer() )
 	{
 		m_hPlayer = UTIL_GetLocalPlayer();

@@ -11,7 +11,9 @@
 #endif
 
 #include "GameEventListener.h"
-//#include "hl2orange.spa.h"
+#ifdef PORTAL
+#include "hl2orange.spa.h"
+#endif
 #include "iachievementmgr.h"
 
 class CAchievementMgr;
@@ -216,19 +218,19 @@ static CBaseAchievement *Create_##className( void )					\
 static CBaseAchievementHelper g_##className##_Helper( Create_##className );
 
 #define DECLARE_ACHIEVEMENT( className, achievementID, achievementName, iPointValue ) \
-	DECLARE_ACHIEVEMENT_( className, achievementID, achievementName, NULL, iPointValue, false )
+	DECLARE_ACHIEVEMENT_( className, achievementID, achievementName, NULL, iPointValue, false, 0 )
 
 #define DECLARE_ACHIEVEMENT_ORDER( className, achievementID, achievementName, iPointValue, iDisplayOrder ) \
 	DECLARE_ACHIEVEMENT_( className, achievementID, achievementName, NULL, iPointValue, false, iDisplayOrder )
 
 #define DECLARE_MAP_EVENT_ACHIEVEMENT_( achievementID, achievementName, gameDirFilter, iPointValue, bHidden ) \
 class CAchievement##achievementID : public CMapAchievement {};		\
-DECLARE_ACHIEVEMENT_( CAchievement##achievementID, achievementID, achievementName, gameDirFilter, iPointValue, bHidden )	\
+DECLARE_ACHIEVEMENT_( CAchievement##achievementID, achievementID, achievementName, gameDirFilter, iPointValue, bHidden, 0 )	\
 
 #define DECLARE_MAP_EVENT_ACHIEVEMENT( achievementID, achievementName, iPointValue )	\
-	DECLARE_MAP_EVENT_ACHIEVEMENT_( achievementID, achievementName, NULL, iPointValue, false )
+	DECLARE_MAP_EVENT_ACHIEVEMENT_( achievementID, achievementName, NULL, iPointValue, false, 0 )
 
 #define DECLARE_MAP_EVENT_ACHIEVEMENT_HIDDEN( achievementID, achievementName, iPointValue )	\
-	DECLARE_MAP_EVENT_ACHIEVEMENT_( achievementID, achievementName, NULL, iPointValue, true )
+	DECLARE_MAP_EVENT_ACHIEVEMENT_( achievementID, achievementName, NULL, iPointValue, true, 0 )
 
 #endif // BASEACHIEVEMENT_H
